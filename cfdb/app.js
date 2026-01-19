@@ -50,7 +50,7 @@ function loadEntriesByTag(category) {
 
   result[0].values.forEach(([article_day, question_number]) => {
     const li = document.createElement("li");
-    li.textContent = str(article_day)+'.'+str(question_number);
+    li.textContent = article_day.toString() + '.' + question_number.toString();
     list.appendChild(li);
   });
 }
