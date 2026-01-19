@@ -38,17 +38,7 @@ function loadTags() {
 // =======================
 function loadEntriesByTag(category) {
   const query = `
-    WITH RECURSIVE sub_tags AS (
-      SELECT id FROM tag WHERE slug = ?
-      UNION ALL
-      SELECT tr.child_tag_id
-      FROM tag_relation tr
-      JOIN sub_tags st ON tr.parent_tag_id = st.id
-    )
-    SELECT DISTINCT e.title
-    FROM entry e
-    JOIN entry_tag et ON e.id = et.entry_id
-    WHERE et.tag_id IN (SELECT id FROM sub_tags);
+    SELECT * FROM relations_articles WHERE category_id=?;
   `;
 
   const result = db.exec(query, [category]);
