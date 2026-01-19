@@ -8,7 +8,7 @@ async function initDB() {
     locateFile: file => `wasm/${file}`
   });
 
-  const response = await fetch("database.db");
+  const response = await fetch("cfdb.db");
   const buffer = await response.arrayBuffer();
   db = new SQL.Database(new Uint8Array(buffer));
 
@@ -19,16 +19,16 @@ async function initDB() {
 // Charger les tags
 // =======================
 function loadTags() {
-  const result = db.exec("SELECT id, name, slug FROM tag;");
+  const result = db.exec("SELECT category, name FROM categories;");
   const rows = result[0].values;
 
   const container = document.getElementById("tags");
   container.innerHTML = "";
 
-  rows.forEach(([id, name, slug]) => {
+  rows.forEach(([category, name]) => {
     const btn = document.createElement("button");
     btn.textContent = name;
-    btn.onclick = () => loadEntriesByTag(slug);
+    btn.onclick = () => loadEntriesByTag(category);
     container.appendChild(btn);
   });
 }
@@ -36,7 +36,7 @@ function loadTags() {
 // =======================
 // Requête récursive
 // =======================
-function loadEntriesByTag(slug) {
+function loadEntriesByTag(category) {
   const query = `
     WITH RECURSIVE sub_tags AS (
       SELECT id FROM tag WHERE slug = ?
@@ -51,7 +51,7 @@ function loadEntriesByTag(slug) {
     WHERE et.tag_id IN (SELECT id FROM sub_tags);
   `;
 
-  const result = db.exec(query, [slug]);
+  const result = db.exec(query, [category]);
 
   const list = document.getElementById("entries");
   list.innerHTML = "";
