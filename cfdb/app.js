@@ -48,9 +48,9 @@ function loadEntriesByTag(category) {
 
   if (!result.length) return;
 
-  result[0].values.forEach(([title]) => {
+  result[0].values.forEach(([article_day]) => {
     const li = document.createElement("li");
-    li.textContent = title;
+    li.textContent = str(article_day)+str(question_number);
     list.appendChild(li);
   });
 }
