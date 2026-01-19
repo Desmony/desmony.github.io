@@ -1,62 +1,69 @@
-import express from "express";
-import Database from "better-sqlite3";
-
-const app = express();
-const db = new Database("cfdb.db");
+let db;
 
 // =======================
-// Utilitaire : sous-tags
+// Initialisation SQLite
 // =======================
-function getSubTagIdsBySlug(slug) {
-  const stmt = db.prepare(`
+async function initDB() {
+  const SQL = await initSqlJs({
+    locateFile: file => `wasm/${file}`
+  });
+
+  const response = await fetch("database.db");
+  const buffer = await response.arrayBuffer();
+  db = new SQL.Database(new Uint8Array(buffer));
+
+  loadTags();
+}
+
+// =======================
+// Charger les tags
+// =======================
+function loadTags() {
+  const result = db.exec("SELECT id, name, slug FROM tag;");
+  const rows = result[0].values;
+
+  const container = document.getElementById("tags");
+  container.innerHTML = "";
+
+  rows.forEach(([id, name, slug]) => {
+    const btn = document.createElement("button");
+    btn.textContent = name;
+    btn.onclick = () => loadEntriesByTag(slug);
+    container.appendChild(btn);
+  });
+}
+
+// =======================
+// Requête récursive
+// =======================
+function loadEntriesByTag(slug) {
+  const query = `
     WITH RECURSIVE sub_tags AS (
-      SELECT id
-      FROM tag
-      WHERE slug = ?
-
+      SELECT id FROM tag WHERE slug = ?
       UNION ALL
-
       SELECT tr.child_tag_id
       FROM tag_relation tr
       JOIN sub_tags st ON tr.parent_tag_id = st.id
     )
-    SELECT id FROM sub_tags;
-  `);
-
-  return stmt.all(slug).map(row => row.id);
-}
-
-// =======================
-// Route API principale
-// =======================
-app.get("/entries", (req, res) => {
-  const { tag } = req.query;
-
-  if (!tag) {
-    return res.status(400).json({ error: "tag manquant" });
-  }
-
-  const tagIds = getSubTagIdsBySlug(tag);
-
-  if (tagIds.length === 0) {
-    return res.json([]);
-  }
-
-  const placeholders = tagIds.map(() => "?").join(",");
-
-  const entries = db.prepare(`
-    SELECT DISTINCT e.id, e.title
+    SELECT DISTINCT e.title
     FROM entry e
     JOIN entry_tag et ON e.id = et.entry_id
-    WHERE et.tag_id IN (${placeholders})
-  `).all(...tagIds);
+    WHERE et.tag_id IN (SELECT id FROM sub_tags);
+  `;
 
-  res.json(entries);
-});
+  const result = db.exec(query, [slug]);
 
-// =======================
-// Démarrage serveur
-// =======================
-app.listen(3000, () => {
-  console.log("Serveur démarré sur http://localhost:3000");
-});
+  const list = document.getElementById("entries");
+  list.innerHTML = "";
+
+  if (!result.length) return;
+
+  result[0].values.forEach(([title]) => {
+    const li = document.createElement("li");
+    li.textContent = title;
+    list.appendChild(li);
+  });
+}
+
+initDB();
+
