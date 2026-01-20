@@ -73,8 +73,12 @@ function loadEntriesByTag(category) {
 
   result[0].values.forEach(([article_day, question_number]) => {
     const li = document.createElement("li");
-    li.textContent = 'Day '+ article_day.toString() + ' Q' + question_number.toString();
-    li.href = 'https://catfishing.net/game/' + article_day.toString()
+    const link = document.createElement("a");
+    link.textContent = 'Day '+ article_day.toString() + ' Q' + question_number.toString();
+
+    link.href = `https://monsite.com/entry/${article_day}`;
+
+    li.appendChild(link);
     list.appendChild(li);
   });
 }
