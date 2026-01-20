@@ -76,7 +76,7 @@ function loadEntriesByTag(category) {
     const link = document.createElement("a");
     link.textContent = 'Day '+ article_day.toString() + ' Q' + question_number.toString();
 
-    link.href = `https://monsite.com/entry/${article_day}`;
+    link.href = `https://catfishing.net/game/${article_day}`;
 
     li.appendChild(link);
     list.appendChild(li);
@@ -135,6 +135,7 @@ function renderTagTree(container, nodes) {
     const tagSpan = document.createElement("span");
     tagSpan.className = "tag";
     tagSpan.textContent = node.name;
+    tagSpan.title = node.description;
 
     tagSpan.onclick = () => {
       if (selectedTagElement) {
