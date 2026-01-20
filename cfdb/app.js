@@ -37,13 +37,18 @@ function loadTags() {
 // Requête récursive
 // =======================
 function loadEntriesByTag(category) {
+  //const query = `
+  //  WITH RECURSIVE sub_categories AS (
+  //    SELECT child_category FROM category_relations WHERE parent_category =?
+  //  )
+  //  SELECT DISTINCT article_day, question_number
+  //  FROM relations_articles
+  //  WHERE (category_id IN (SELECT * FROM sub_categories)) OR category_id=?;
+  //`;
   const query = `
-    WITH RECURSIVE sub_categories AS (
-      SELECT child_category FROM category_relations WHERE parent_category =?
-    )
     SELECT DISTINCT article_day, question_number
     FROM relations_articles
-    WHERE (category_id IN (SELECT * FROM sub_categories)) OR category_id=?;
+    WHERE category_id=?;
   `;
 
   const result = db.exec(query, [category,category]);
