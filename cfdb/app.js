@@ -12,7 +12,12 @@ async function initDB() {
   const buffer = await response.arrayBuffer();
   db = new SQL.Database(new Uint8Array(buffer));
 
-  loadTags();
+  const tree = buildTagTree();
+  const container = document.getElementById("tags");
+  container.innerHTML = "";
+  renderTagTree(container, tree);
+
+  //loadTags();
 }
 
 // =======================
@@ -73,6 +78,69 @@ function loadEntriesByTag(category) {
     list.appendChild(li);
   });
 }
+
+function buildTagTree() {
+  const nodes = {};
+
+  // Tous les tags
+  const allTags = db.exec("SELECT category, name, description FROM categories;")[0].values;
+  allTags.forEach(([category, name, description]) => {
+    nodes[category] = { category, name, description, children: [] };
+  });
+
+  // Relations
+  const relations = db.exec(`
+    SELECT parent_category, child_category FROM category_relations;
+  `)[0]?.values || [];
+
+  relations.forEach(([parentId, childId]) => {
+    nodes[parentId].children.push(nodes[childId]);
+  });
+
+  // Racines
+  const roots = Object.values(nodes).filter(node => {
+    return !relations.some(r => r[1] === node.category);
+  });
+
+  return roots;
+}
+
+let selectedTagElement = null;
+
+function renderTagTree(container, nodes) {
+  const ul = document.createElement("ul");
+  ul.className = "tag-tree";
+
+  nodes.forEach(node => {
+    const li = document.createElement("li");
+
+    const span = document.createElement("span");
+    span.textContent = node.name;
+    span.className = "tag";
+
+    span.onclick = () => {
+      if (selectedTagElement) {
+        selectedTagElement.classList.remove("selected");
+      }
+      span.classList.add("selected");
+      selectedTagElement = span;
+
+      loadEntriesByTag(node.category);
+    };
+
+    li.appendChild(span);
+
+    if (node.children.length > 0) {
+      renderTagTree(li, node.children);
+    }
+
+    ul.appendChild(li);
+  });
+
+  container.appendChild(ul);
+}
+
+
 
 initDB();
 
