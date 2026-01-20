@@ -19,15 +19,16 @@ async function initDB() {
 // Charger les tags
 // =======================
 function loadTags() {
-  const result = db.exec("SELECT category, name FROM categories;");
+  const result = db.exec("SELECT category, name, description FROM categories;");
   const rows = result[0].values;
 
   const container = document.getElementById("tags");
   container.innerHTML = "";
 
-  rows.forEach(([category, name]) => {
+  rows.forEach(([category, name, description]) => {
     const btn = document.createElement("button");
     btn.textContent = name;
+    btn.title = description;
     btn.onclick = () => loadEntriesByTag(category);
     container.appendChild(btn);
   });
