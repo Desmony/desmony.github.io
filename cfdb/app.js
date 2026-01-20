@@ -1,5 +1,5 @@
 let db;
-
+let selectedButton = null;
 // =======================
 // Initialisation SQLite
 // =======================
@@ -29,7 +29,14 @@ function loadTags() {
     const btn = document.createElement("button");
     btn.textContent = name;
     btn.title = description;
-    btn.onclick = () => loadEntriesByTag(category);
+    btn.onclick = () => {
+      if (selectedButton) {
+        selectedButton.classList.remove("selected");
+      }
+      btn.classList.add("selected");
+      selectedButton = btn;
+      loadEntriesByTag(category)
+    };
     container.appendChild(btn);
   });
 }
