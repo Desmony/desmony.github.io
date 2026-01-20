@@ -46,7 +46,7 @@ function loadEntriesByTag(category) {
     WHERE (category_id IN (SELECT * FROM sub_categories)) OR category_id=?;
   `;
 
-  const result = db.exec(query, [category]);
+  const result = db.exec(query, [category,category]);
 
   const list = document.getElementById("entries");
   list.innerHTML = "";
