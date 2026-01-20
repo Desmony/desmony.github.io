@@ -113,25 +113,45 @@ function renderTagTree(container, nodes) {
 
   nodes.forEach(node => {
     const li = document.createElement("li");
+    li.className = "tag-node";
 
-    const span = document.createElement("span");
-    span.textContent = node.name;
-    span.className = "tag";
+    // ▶ toggle
+    const toggle = document.createElement("span");
+    toggle.className = "toggle";
+    toggle.textContent = node.children.length ? "▶" : "";
+    toggle.onclick = (e) => {
+      e.stopPropagation();
+      if (!childrenUl) return;
 
-    span.onclick = () => {
+      const isCollapsed = childrenUl.classList.toggle("collapsed");
+      toggle.textContent = isCollapsed ? "▶" : "▼";
+    };
+
+    // tag clickable
+    const tagSpan = document.createElement("span");
+    tagSpan.className = "tag";
+    tagSpan.textContent = node.name;
+
+    tagSpan.onclick = () => {
       if (selectedTagElement) {
         selectedTagElement.classList.remove("selected");
       }
-      span.classList.add("selected");
-      selectedTagElement = span;
+      tagSpan.classList.add("selected");
+      selectedTagElement = tagSpan;
 
       loadEntriesByTag(node.category);
     };
 
-    li.appendChild(span);
+    li.appendChild(toggle);
+    li.appendChild(tagSpan);
 
-    if (node.children.length > 0) {
-      renderTagTree(li, node.children);
+    let childrenUl = null;
+    if (node.children.length) {
+      childrenUl = document.createElement("ul");
+      childrenUl.className = "tag-tree collapsed";
+
+      renderTagTree(childrenUl, node.children);
+      li.appendChild(childrenUl);
     }
 
     ul.appendChild(li);
