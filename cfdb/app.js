@@ -37,19 +37,19 @@ function loadTags() {
 // Requête récursive
 // =======================
 function loadEntriesByTag(category) {
-  //const query = `
-  //  WITH RECURSIVE sub_categories AS (
-  //    SELECT child_category FROM category_relations WHERE parent_category =?
-  //  )
-  //  SELECT DISTINCT article_day, question_number
-  //  FROM relations_articles
-  //  WHERE (category_id IN (SELECT * FROM sub_categories)) OR category_id=?;
-  //`;
   const query = `
+    WITH RECURSIVE sub_categories AS (
+      SELECT child_category FROM category_relations WHERE parent_category =?
+    )
     SELECT DISTINCT article_day, question_number
     FROM relations_articles
-    WHERE category_id=?;
+    WHERE (category_id IN (SELECT * FROM sub_categories)) OR category_id=?;
   `;
+  //const query = `
+  //  SELECT DISTINCT article_day, question_number
+  //  FROM relations_articles
+  //  WHERE category_id=?;
+  //`;
 
   const result = db.exec(query, [category,category]);
 
@@ -59,9 +59,9 @@ function loadEntriesByTag(category) {
   if (!result.length) return;
 
   result[0].values.forEach(([article_day, question_number]) => {
-    const li = document.createElement("link");
+    const li = document.createElement("li");
     li.textContent = 'Day '+ article_day.toString() + ' Q' + question_number.toString();
-    li.href = 'https://catfishing.net/game/' + article_day.toString()
+    //li.href = 'https://catfishing.net/game/' + article_day.toString()
     list.appendChild(li);
   });
 }
