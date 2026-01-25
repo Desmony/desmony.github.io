@@ -67,9 +67,9 @@ function loadTags() {
   const container = document.getElementById("tags");
   container.innerHTML = "";
 
-  rows.forEach(([category, name, description, total]) => {
+  rows.forEach(([category, name, description, total_entries]) => {
     const btn = document.createElement("button");
-    btn.textContent = name + ' (' + total + ')';
+    btn.textContent = name + ' (' + total_entries.toString() + ')';
     btn.title = description;
     btn.onclick = () => {
       if (selectedButton) {
