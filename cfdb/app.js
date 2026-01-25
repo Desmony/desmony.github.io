@@ -24,15 +24,52 @@ async function initDB() {
 // Charger les tags
 // =======================
 function loadTags() {
-  const result = db.exec("SELECT category, name, description FROM categories;");
+	const query = `WITH RECURSIVE sub_categories AS (
+    	SELECT
+       		c.category AS root_category,
+        	c.category AS child_category
+    	FROM categories c
+    	UNION ALL
+    	SELECT
+    	    sc.root_category,
+    	    cr.child_category
+    	FROM category_relations cr
+    	JOIN sub_categories sc
+    	    ON cr.parent_category = sc.child_category
+		)
+		SELECT
+		    c.category,
+		    c.name,
+		    c.description,
+		    COUNT(*) AS total_entries
+		FROM (
+		    SELECT DISTINCT
+		           sc.root_category,
+		           ra.article_day,
+		           ar.answer
+		    FROM sub_categories sc
+		    JOIN relations_articles ra
+		        ON ra.category_id = sc.child_category
+		    JOIN articles ar
+		        ON ar.day = ra.article_day
+		       AND ar.question = ra.question_number
+		) t
+		JOIN categories c
+		    ON c.category = t.root_category
+		GROUP BY
+		    c.category,
+		    c.name,
+		    c.description
+		;`
+  const result = db.exec(query);
   const rows = result[0].values;
 
   const container = document.getElementById("tags");
   container.innerHTML = "";
 
-  rows.forEach(([category, name, description]) => {
+  rows.forEach(([category, name, description, total]) => {
     const btn = document.createElement("button");
-    btn.textContent = name;
+    btn.textContent = name + ' (' + total + ')';
     btn.title = description;
     btn.onclick = () => {
       if (selectedButton) {
