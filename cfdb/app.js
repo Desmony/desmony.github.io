@@ -15,7 +15,7 @@ async function initDB() {
   const tree = buildTagTree();
   const container = document.getElementById("tags");
   container.innerHTML = "";
-  renderTagTree(container, tree);
+  renderTagColumns(tree);
 
   //loadTags();
 }
@@ -151,9 +151,6 @@ function buildTagTree() {
 let selectedTagElement = null;
 
 function renderTagTree(container, nodes) {
-  const ul = document.createElement("ul");
-  ul.className = "tag-tree";
-
   nodes.forEach(node => {
     const li = document.createElement("li");
     li.className = "tag-node";
@@ -162,6 +159,10 @@ function renderTagTree(container, nodes) {
     const toggle = document.createElement("span");
     toggle.className = "toggle";
     toggle.textContent = node.children.length ? "▶" : "";
+
+    // children UL (déclaré avant pour le toggle)
+    let childrenUl = null;
+
     toggle.onclick = (e) => {
       e.stopPropagation();
       if (!childrenUl) return;
@@ -189,7 +190,6 @@ function renderTagTree(container, nodes) {
     li.appendChild(toggle);
     li.appendChild(tagSpan);
 
-    let childrenUl = null;
     if (node.children.length) {
       childrenUl = document.createElement("ul");
       childrenUl.className = "tag-tree collapsed";
@@ -198,11 +198,28 @@ function renderTagTree(container, nodes) {
       li.appendChild(childrenUl);
     }
 
-    ul.appendChild(li);
+    container.appendChild(li);
   });
-
-  container.appendChild(ul);
 }
+
+function renderTagColumns(tree) {
+  const container = document.getElementById("tags");
+  container.innerHTML = "";
+
+  tree.forEach(root => {
+    const column = document.createElement("div");
+    column.className = "tag-column";
+
+    const ul = document.createElement("ul");
+    ul.className = "tag-tree";
+
+    renderTagTree(ul, [root]);
+
+    column.appendChild(ul);
+    container.appendChild(column);
+  });
+}
+
 
 
 

@@ -34,8 +34,9 @@ button.selected {
 }
 
 #tags {
-	column-count: 3;
-	column-gap: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
 }
 
 ul.tag-tree {
@@ -65,6 +66,32 @@ li.tag-node {
 .tag.selected {
 	background: #064E3B;
 	color: #D1FAE5;
+}
+
+.tag-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.tag-tree {
+  list-style: none;
+  padding-left: 16px;
+  margin: 0;
+}
+
+.collapsed {
+  display: none;
+}
+
+.tag-node {
+  margin-bottom: 6px;
+}
+
+
+.tag-column {
+  border-right: 1px solid #e5e7eb;
+  padding-right: 12px;
 }
 
 ul.collapsed {
