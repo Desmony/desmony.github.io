@@ -69,9 +69,15 @@ ul.collapsed {
 	display: none;
 }
 
-h2:link{
+#entries:link{
 	color: #FBBF24;
+	text-decoration: none;
 }
-h2:visited{
+#entries:visited{
 	color: #F87167;
+	text-decoration: none;
+}
+#entries:hover{
+	color: #FEF3C7;
+	text-decoration: underline;
 }
