@@ -1,7 +1,13 @@
+.cactus-classical-serif-regular {
+  font-family: "Cactus Classical Serif", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 body {
 	background-color: #022C22;
 	color: #FEF3C7;
-  	font-family: Goudy Old Style, Optima;
+  	font-family: "Cactus Classical Serif", Optima;
   	padding: 20px;
 }
 
