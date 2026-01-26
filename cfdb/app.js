@@ -69,7 +69,8 @@ function loadTags() {
 
   rows.forEach(([category, name, description, total_entries]) => {
     const btn = document.createElement("button");
-    btn.textContent = name.toString() + ' (' + total_entries.toString() + ')';
+    const text_category = name.toString() + ' (' + total_entries.toString() + ')';
+    btn.textContent = text_category;
     btn.title = description;
     btn.onclick = () => {
       if (selectedButton) {
