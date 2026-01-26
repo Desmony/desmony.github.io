@@ -113,6 +113,7 @@ function loadEntriesByTag(category) {
   result[0].values.forEach(([article_day, question_number]) => {
     const li = document.createElement("li");
     const link = document.createElement("a");
+    li.className = "a";
     link.textContent = 'Day '+ article_day.toString() + ' Q' + question_number.toString();
 
     link.href = `https://catfishing.net/game/${article_day}`;

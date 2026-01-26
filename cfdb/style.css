@@ -108,15 +108,15 @@ ul.collapsed {
   margin-bottom: 8px;
 }
 
-#entries li:link{
+#entries a:link{
 	color: #FBBF24;
 	text-decoration: none;
 }
-#entries li:visited{
+#entries a:visited{
 	color: #F87167;
 	text-decoration: none;
 }
-#entries li:hover{
+#entries a:hover{
 	color: #FEF3C7;
 	text-decoration: underline;
 }
