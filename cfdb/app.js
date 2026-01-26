@@ -126,10 +126,48 @@ function loadEntriesByTag(category) {
 function buildTagTree() {
   const nodes = {};
 
+  const query = `WITH RECURSIVE sub_categories AS (
+    	SELECT
+       		c.category AS root_category,
+        	c.category AS child_category
+    	FROM categories c
+    	UNION ALL
+    	SELECT
+    	    sc.root_category,
+    	    cr.child_category
+    	FROM category_relations cr
+    	JOIN sub_categories sc
+    	    ON cr.parent_category = sc.child_category
+		)
+		SELECT
+		    c.category,
+		    c.name,
+		    c.description,
+		    COUNT(*) AS total_entries
+		FROM (
+		    SELECT DISTINCT
+		           sc.root_category,
+		           ra.article_day,
+		           ar.answer
+		    FROM sub_categories sc
+		    JOIN relations_articles ra
+		        ON ra.category_id = sc.child_category
+		    JOIN articles ar
+		        ON ar.day = ra.article_day
+		       AND ar.question = ra.question_number
+		) t
+		JOIN categories c
+		    ON c.category = t.root_category
+		GROUP BY
+		    c.category,
+		    c.name,
+		    c.description
+		;`
+
   // Tous les tags
-  const allTags = db.exec("SELECT category, name, description FROM categories;")[0].values;
-  allTags.forEach(([category, name, description]) => {
-    nodes[category] = { category, name, description, children: [] };
+  const allTags = db.exec(query)[0].values;
+  allTags.forEach(([category, name, description, count]) => {
+    nodes[category] = { category, name, description, count, children: [] };
   });
 
   // Relations
@@ -175,7 +213,7 @@ function renderTagTree(container, nodes) {
     // tag clickable
     const tagSpan = document.createElement("span");
     tagSpan.className = "tag";
-    tagSpan.textContent = node.name;
+    tagSpan.textContent = node.name + ' (' + node.count + ')';
     tagSpan.title = node.description;
 
     tagSpan.onclick = () => {
