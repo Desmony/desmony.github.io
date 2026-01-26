@@ -62,3 +62,10 @@ li.tag-node {
 ul.collapsed {
 	display: none;
 }
+
+entries:link{
+	color: #FBBF24;
+}
+entries:visited{
+	color: #F87167;
+}
