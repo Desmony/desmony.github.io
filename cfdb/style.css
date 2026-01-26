@@ -63,9 +63,9 @@ ul.collapsed {
 	display: none;
 }
 
-entries:link{
+h2:link{
 	color: #FBBF24;
 }
-entries:visited{
+h2:visited{
 	color: #F87167;
 }
