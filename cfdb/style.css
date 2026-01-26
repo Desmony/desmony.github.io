@@ -41,10 +41,12 @@ button.selected {
 ul.tag-tree {
 	list-style: none;
 	padding-left: 16px;
+	margin: 0;
 	break-inside: avoid;
 }
 
 li.tag-node {
+	break-inside: avoid;
 	margin-bottom: 4px;
 }
 
@@ -68,6 +70,16 @@ li.tag-node {
 ul.collapsed {
 	display: none;
 }
+#entries {
+  column-count: 2; 
+  column-gap: 40px;
+  padding-left: 20px;
+}
+
+#entries li {
+  break-inside: avoid;
+  margin-bottom: 8px;
+}
 
 #entries:link{
 	color: #FBBF24;
@@ -80,4 +92,19 @@ ul.collapsed {
 #entries:hover{
 	color: #FEF3C7;
 	text-decoration: underline;
+}
+@media (max-width: 900px) {
+  #tags {
+    column-count: 2;
+  }
+
+  #entries {
+    column-count: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  #tags {
+    column-count: 1;
+  }
 }
