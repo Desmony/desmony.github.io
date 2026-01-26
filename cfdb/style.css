@@ -9,6 +9,10 @@ body {
 	color: #FEF3C7;
   	font-family: "Cactus Classical Serif", Optima;
   	padding: 20px;
+	background-image: url("arcimboldo_the_librarian.png");
+ 	background-repeat: no-repeat;
+  	background-position: right top;
+  	background-attachment: fixed;
 }
 
 h1 {
