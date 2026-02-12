@@ -162,6 +162,8 @@ function buildTagTree() {
 		    c.category,
 		    c.name,
 		    c.description
+    ORDER BY
+        c.name
 		;`
 
   // Tous les tags
